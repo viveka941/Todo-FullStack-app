@@ -82,3 +82,100 @@ export const login = async (req, res) => {
     });
   }
 };
+
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, password, phone, address } = req.body;
+
+    const existingUser = await User.findById(id);
+    if (!existingUser) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+  
+    let updatedPassword = existingUser.password;
+    if (password) {
+      updatedPassword = await bcrypt.hash(password, 10);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        name: name || existingUser.name,
+        email: email || existingUser.email,
+        password: updatedPassword,
+        phone: phone || existingUser.phone,
+        address: address || existingUser.address,
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      success: true,
+      profile: updatedUser
+    });
+  } catch (error) {
+    console.error("Update Profile Error:", error);
+    return res.status(500).json({
+      message: "Server error during profile update",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+
+
+export const deleteProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username } = req.body;
+
+    if (!username) {
+      return res.status(400).json({
+        message: "Username is required for verification",
+        success: false,
+      });
+    }
+
+    const existingUser = await User.findById(id);
+    if (!existingUser) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    if (
+      existingUser.name.trim().toLowerCase() !== username.trim().toLowerCase()
+    ) {
+      return res.status(403).json({
+        message: "Invalid username",
+        success: false,
+      });
+    }
+
+    await User.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      message: "Profile deleted successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Delete Profile Error:", error);
+    return res.status(500).json({
+      message: "Server error while deleting profile",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+
+
