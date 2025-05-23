@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { User } from "../model/user.model.js";
+import jwt from 'jsonwebtoken'
 
 export const register = async (req, res) => {
   try {
@@ -48,37 +49,79 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password) {
-      return res.status(403).json({
-        message: "requried fields is missing",
+      return res.status(400).json({
+        message: "Required fields are missing",
         success: false,
       });
     }
+
     const existingUser = await User.findOne({ email });
+
     if (!existingUser) {
       return res.status(404).json({
-        message: "user is not found",
+        message: "User not found",
         success: false,
       });
     }
+
     const isMatch = await bcrypt.compare(password, existingUser.password);
+
     if (!isMatch) {
       return res.status(401).json({
-        message: "worng password",
+        message: "Wrong password",
         success: false,
       });
     }
-    return res.status(200).json({
-      message: "successfully login",
-      success: true,
-      user: existingUser,
+
+    // Generate JWT
+    const tokenData = {
+      userId: existingUser._id,
+    };
+
+    const token = jwt.sign(tokenData, "12345abc", {
+      expiresIn: "1h",
     });
+
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        httpOnly: true,
+        sameSite: "Strict",
+      })
+      .json({
+        message: "Successfully logged in",
+        success: true,
+        user: {
+          id: existingUser._id,
+          email: existingUser.email,
+          name: existingUser.name,
+        },
+      });
   } catch (error) {
-    console.error("Register Error:", error);
+    console.error("Login Error:", error);
     return res.status(500).json({
-      message: "Server error during registration",
+      message: "Server error during login",
       success: false,
       error: error.message,
+    });
+  }
+};
+
+// Logout Controller
+export const logout = (req, res) => {
+  try {
+    return res.status(200).clearCookie("token").json({
+      message: "Logged out successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Logout Error:", error);
+    return res.status(500).json({
+      message: "Server error during logout",
+      success: false,
     });
   }
 };

@@ -24,11 +24,11 @@ export default function Login() {
   const onSubmit =async (data) => {
     console.log(data);
     try {
-      const token = localStorage.getItem("token");
+     
       const res = await axios.post("http://localhost:5000/api/login", data, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${token}` : "",
+         
         },
       });
       console.log(res.data.user)

@@ -3,9 +3,11 @@ import cors from 'cors'
 import connectDb from './utils/connectDB.js'
 import userRoute from './router/user.route.js'
 import taskRoute from './router/task.route.js'
+import cookieParser from 'cookie-parser'
 
 const app = express()
 app.use(express.json())
+app.use(cookieParser())
 const corsOption = {
   origin: ["http://localhost:5173"],
   credentials: true,
