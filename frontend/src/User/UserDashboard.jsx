@@ -15,6 +15,7 @@ import {
 import { useParams } from "react-router-dom";
 
 import UserProfileUpdate from "./UserProfileUpdate";
+import ShowAllTask from "./ShowAllTask";
 
 export default function UserDashboard() {
   const [open, setOpen] = useState(false);
@@ -111,7 +112,7 @@ export default function UserDashboard() {
           <AddTask userId={id} />
         </DialogContent>
       </Dialog>
-      {/* <ShowAllTask userId={id} /> */}
+      <ShowAllTask userId={id} />
     </div>
   );
 }

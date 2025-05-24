@@ -1,7 +1,5 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,27 +10,47 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label"; // Use shadcn's Label
-import { Separator } from "@/components/ui/separator"; // Optional: for visual separation
-import { GithubIcon, ChromeIcon } from "lucide-react"; // Example for social login buttons
-import { Link } from "react-router-dom";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { GithubIcon, ChromeIcon } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import axios from "axios";
 
 export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    watch, // To watch password for confirm password validation
-    formState: { errors },
+    watch,
+    formState: { errors, isSubmitting },
   } = useForm();
+  const navigate = useNavigate();
+  const password = watch("password");
 
-  const onSubmit = (data) => {
-    console.log("Form data submitted:", data);
-    // Here you would typically send the data to your backend API
-    // e.g., await fetch('/api/register', { method: 'POST', body: JSON.stringify(data) });
-    alert("Registration submitted! Check console for data.");
+  const onSubmit = async (data) => {
+    console.log(data)
+    try {
+      const res = await axios.post("http://localhost:5000/api/register", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.data.success) {
+        toast.success("Registration successful!");
+        navigate("/login");
+      } else {
+        toast.error(
+          res.data.message || "Registration failed. Please try again."
+        );
+      }
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          "Something went wrong. Please try again."
+      );
+    }
   };
-
-  const password = watch("password"); // Watch the value of the password field
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-stone-200 dark:from-slate-900 dark:to-stone-800 flex flex-col items-center justify-center p-4 sm:p-6">
@@ -57,7 +75,7 @@ export default function RegisterPage() {
               <Input
                 id="name"
                 type="text"
-                placeholder="John Doe"
+                placeholder="Vivek kumar"
                 {...register("name", {
                   required: "Full name is required.",
                   minLength: {
@@ -65,7 +83,6 @@ export default function RegisterPage() {
                     message: "Name must be at least 2 characters.",
                   },
                 })}
-                aria-invalid={errors.name ? "true" : "false"}
                 className={errors.name ? "border-destructive" : ""}
               />
               {errors.name && (
@@ -81,7 +98,7 @@ export default function RegisterPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="name@example.com"
+                placeholder="name@email.com"
                 {...register("email", {
                   required: "Email is required.",
                   pattern: {
@@ -89,7 +106,6 @@ export default function RegisterPage() {
                     message: "Invalid email address.",
                   },
                 })}
-                aria-invalid={errors.email ? "true" : "false"}
                 className={errors.email ? "border-destructive" : ""}
               />
               {errors.email && (
@@ -109,16 +125,10 @@ export default function RegisterPage() {
                 {...register("password", {
                   required: "Password is required.",
                   minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters.",
+                    value: 5,
+                    message: "Password must be at least 5 characters.",
                   },
-                  // Example: Add more complex password validation if needed
-                  // pattern: {
-                  //   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-                  //   message: "Password must include uppercase, lowercase, and a number."
-                  // }
                 })}
-                aria-invalid={errors.password ? "true" : "false"}
                 className={errors.password ? "border-destructive" : ""}
               />
               {errors.password && (
@@ -140,7 +150,6 @@ export default function RegisterPage() {
                   validate: (value) =>
                     value === password || "Passwords do not match.",
                 })}
-                aria-invalid={errors.confirmPassword ? "true" : "false"}
                 className={errors.confirmPassword ? "border-destructive" : ""}
               />
               {errors.confirmPassword && (
@@ -150,25 +159,50 @@ export default function RegisterPage() {
               )}
             </div>
 
-            {/* Address - Optional field example */}
+            <div className="space-y-1.5">
+              <Label htmlFor="phone">Phone</Label>
+              <Input
+                id="phone"
+                type="text"
+                placeholder="9876543210"
+                {...register("phone", {
+                  required: "phone number is required.",
+                  minLength: {
+                    value: 10,
+                    message: "phone must be at least 10 characters.",
+                  },
+                })}
+                className={errors.phone ? "border-destructive" : ""}
+              />
+              {errors.phone && (
+                <p className="text-sm text-destructive">
+                  {errors.phone.message}
+                </p>
+              )}
+            </div>
+            {/* Address (Optional) */}
             <div className="space-y-1.5">
               <Label htmlFor="address">Address (Optional)</Label>
               <Input
                 id="address"
                 type="text"
-                placeholder="123 Main St, Anytown"
-                {...register("address")} // No validation means it's optional
+                placeholder="123 Main St, phagwara"
+                {...register("address")}
               />
-              {/* No error message needed if it's truly optional without validation rules */}
             </div>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" form="register-form" className="w-full">
-            Create Account
+          <Button
+            type="submit"
+            form="register-form"
+            className="w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Creating Account..." : "Create Account"}
           </Button>
 
-          {/* Optional: Social Login Buttons */}
+          {/* Social Login */}
           <div className="relative w-full">
             <div className="absolute inset-0 flex items-center">
               <Separator />
@@ -180,10 +214,10 @@ export default function RegisterPage() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 w-full">
-            <Button variant="outline" className="w-full">
+            <Button onClick ={()=>navigate("www.github.com")} variant="outline" className="w-full">
               <GithubIcon className="mr-2 h-4 w-4" /> GitHub
             </Button>
-            <Button variant="outline" className="w-full">
+            <Button onClick={()=>navigate()} variant="outline" className="w-full">
               <ChromeIcon className="mr-2 h-4 w-4" /> Google
             </Button>
           </div>
@@ -191,7 +225,7 @@ export default function RegisterPage() {
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
-              to="/login" // Adjust link to your login page
+              to="/login"
               className="font-medium text-primary hover:underline"
             >
               Sign In

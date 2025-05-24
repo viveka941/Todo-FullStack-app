@@ -38,3 +38,32 @@ export const addTask = async (req, res) => {
     });
   }
 };
+
+
+
+export const fetechTask = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required",
+        success: false,
+      });
+    }
+
+    const allTasks = await Task.find({ userId });
+
+    return res.status(200).json({
+      message: "All tasks fetched successfully",
+      success: true,
+      tasks: allTasks,
+    });
+  } catch (error) {
+    console.error("Fetch Task Error:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
