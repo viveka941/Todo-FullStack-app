@@ -28,7 +28,7 @@ export default function RegisterPage() {
   const password = watch("password");
 
   const onSubmit = async (data) => {
-    console.log(data)
+    console.log(data);
     try {
       const res = await axios.post("http://localhost:5000/api/register", data, {
         headers: {
@@ -214,10 +214,10 @@ export default function RegisterPage() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 w-full">
-            <Button onClick ={()=>navigate("www.github.com")} variant="outline" className="w-full">
+            <Button variant="outline" className="w-full">
               <GithubIcon className="mr-2 h-4 w-4" /> GitHub
             </Button>
-            <Button onClick={()=>navigate()} variant="outline" className="w-full">
+            <Button variant="outline" className="w-full">
               <ChromeIcon className="mr-2 h-4 w-4" /> Google
             </Button>
           </div>
