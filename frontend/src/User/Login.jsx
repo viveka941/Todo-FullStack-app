@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,32 +10,44 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 
 export default function Login() {
+  const [user, setUser] = useState([]);
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit =async (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
     try {
-     
       const res = await axios.post("http://localhost:5000/api/login", data, {
         headers: {
           "Content-Type": "application/json",
-         
         },
       });
-      console.log(res.data.user)
+
+      // Success: show message and optionally set user
+      toast.success(res.data.message);
+      console.log(res.data.user);
+
+      if (res.data.success === true) {
+        setUser(res.data.user);
+        navigate(`/userProfile/${res.data.user.id}`);
+
+      }
     } catch (error) {
-      
+      if (error.response && error.response.data) {
+         toast.error(error.response.data.message || "Login failed");
+      } else {
+        toast.error("Network or server error");
+      }
     }
-    toast.success("Login submitted!");
   };
 
   return (

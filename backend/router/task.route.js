@@ -4,5 +4,5 @@ import { authenticateUser } from "../middleware/isAuthentication.js";
 
 const router = express.Router();
 
-router.route("/addTask/:id").post(authenticateUser, addTask);
+router.route("/addTask/:id").post( addTask);
 export default router;

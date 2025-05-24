@@ -6,14 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
 
 export default function AddTask({ userId }) {
-  const [task, setTask] = useState({
-    userTask: "",
-    description: "",
-    priority: "medium",
-    dueDate: "",
-  });
+  const {register,handleSubmit,formState:{errors}} =useForm()
 
   const handleAddTask = async (e) => {
     e.preventDefault();

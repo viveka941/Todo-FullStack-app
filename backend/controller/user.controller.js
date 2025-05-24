@@ -110,6 +110,34 @@ export const login = async (req, res) => {
   }
 };
 
+export const loginById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = await User.findById(id); // ✅ Pass `id` directly
+
+    if (!data) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Login by ID successful",
+      success: true,
+      user: data,
+    });
+  } catch (error) {
+    console.error("Login Error:", error);
+    return res.status(500).json({
+      message: "Server error during login by ID",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
 // Logout Controller
 export const logout = (req, res) => {
   try {

@@ -12,19 +12,30 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { useParams } from "react-router-dom";
 
-
+import UserProfileUpdate from "./UserProfileUpdate";
 
 export default function UserDashboard() {
+  const [open, setOpen] = useState(false);
+
   const [user, setUser] = useState({});
-  const userId = "64f0e7c82e5bd3f96f1123ac"; // Replace with actual user session/token
+  const { id } = useParams();
 
   useEffect(() => {
-    axios
-      .get(`/api/user/${userId}`)
-      .then((res) => setUser(res.data))
-      .catch((err) => console.error(err));
-  }, [userId]);
+    const userData = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/loginById/${id}`
+        );
+       
+        setUser(res.data.user);
+      } catch (error) {
+        console.log("server is not responding");
+      }
+    };
+    userData();
+  }, [id]);
 
   return (
     <div className="max-w-6xl mx-auto p-8 space-y-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -62,12 +73,26 @@ export default function UserDashboard() {
               <p className="text-gray-900 dark:text-gray-100">{user.address}</p>
             </div>
           </div>
-          <Button
+          {/* <Button
             className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-semibold"
             onClick={() => toast.info("Redirecting to update profile...")}
           >
             Update Profile
-          </Button>
+          </Button> */}
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="default">Update Profile</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Update Profile</DialogTitle>
+                <DialogDescription>
+                  Update all details if you want.
+                </DialogDescription>
+              </DialogHeader>
+              <UserProfileUpdate userId={id} onClose={() => setOpen(false)} />
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
       <Dialog>
@@ -83,10 +108,10 @@ export default function UserDashboard() {
           </DialogHeader>
 
           {/* AddTask component */}
-          <AddTask userId={userId} />
+          <AddTask userId={id} />
         </DialogContent>
       </Dialog>
-      {/* <ShowAllTask userId={userId} /> */}
+      {/* <ShowAllTask userId={id} /> */}
     </div>
   );
 }
