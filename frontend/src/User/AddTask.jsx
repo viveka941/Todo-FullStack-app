@@ -1,4 +1,3 @@
-import { useState } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,21 +8,29 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 
 export default function AddTask({ userId }) {
-  const {register,handleSubmit,formState:{errors}} =useForm()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
-  const handleAddTask = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      await axios.post("/api/task", { ...task, userId });
-      toast.success("Task added successfully");
-      setTask({
-        userTask: "",
-        description: "",
-        priority: "medium",
-        dueDate: "",
-      });
-    } catch (err) {
-      toast.error("Failed to add task");
+      const res = await axios.post(
+        `http://localhost:5000/task/addTask/${userId}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(data);
+      toast.success("Task added successfully!");
+      reset(); // clear form
+    } catch (error) {
+      toast.error("Failed to add task.");
     }
   };
 
@@ -35,57 +42,51 @@ export default function AddTask({ userId }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleAddTask} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Task Title */}
           <div className="grid gap-1.5">
-            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Task Title
-            </Label>
+            <Label>Task Title</Label>
             <Input
-              value={task.userTask}
-              onChange={(e) => setTask({ ...task, userTask: e.target.value })}
               placeholder="Enter task title"
-              required
+              {...register("userTask", { required: "Task title is required" })}
               className="focus-visible:ring-2 focus-visible:ring-primary"
             />
+            {errors.userTask && (
+              <p className="text-sm text-red-500">{errors.userTask.message}</p>
+            )}
           </div>
 
+          {/* Description */}
           <div className="grid gap-1.5">
-            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Description
-            </Label>
+            <Label>Description</Label>
             <Textarea
-              value={task.description}
-              onChange={(e) =>
-                setTask({ ...task, description: e.target.value })
-              }
               placeholder="Task description"
+              {...register("description")}
               className="min-h-[100px] focus-visible:ring-2 focus-visible:ring-primary"
             />
           </div>
 
+          {/* Priority */}
           <div className="grid gap-1.5">
-            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Priority
-            </Label>
+            <Label>Priority</Label>
             <select
+              {...register("priority")}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              value={task.priority}
-              onChange={(e) => setTask({ ...task, priority: e.target.value })}
             >
               <option value="low">Low</option>
-              <option value="medium">Medium</option>
+              <option value="medium" selected>
+                Medium
+              </option>
               <option value="high">High</option>
             </select>
           </div>
 
+          {/* Due Date */}
           <div className="grid gap-1.5">
-            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Due Date
-            </Label>
+            <Label>Due Date</Label>
             <Input
               type="date"
-              value={task.dueDate}
-              onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+              {...register("dueDate")}
               className="focus-visible:ring-2 focus-visible:ring-primary"
             />
           </div>
