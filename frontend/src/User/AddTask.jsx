@@ -18,7 +18,7 @@ export default function AddTask({ userId, onClose }) {
   const onSubmit = async (data) => {
     try {
       const res = await axios.post(
-        `http://localhost:5000/task/addTask/${userId}`,
+        `${import.meta.env.VITE_API_TASK}/addTask/${userId}`,
         data,
         {
           headers: {

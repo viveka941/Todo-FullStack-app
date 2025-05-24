@@ -10,8 +10,10 @@ import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate()
+  
   return (
     <>
+
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white p-6 flex flex-col items-center space-y-10 md:space-y-16 pb-16">
         {/* Hero Card */}

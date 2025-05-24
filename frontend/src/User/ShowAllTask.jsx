@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Trash2 } from "lucide-react"; // 🔥 Trash icon import
+import { Trash2 } from "lucide-react"; 
 
 function ShowAllTask({ userId }) {
   const [tasks, setTasks] = useState([]);
@@ -15,7 +15,7 @@ function ShowAllTask({ userId }) {
     try {
       setLoading(true);
       const res = await axios.get(
-        `http://localhost:5000/task/allTask/${userId}`
+        `${import.meta.env.VITE_API_TASK}/allTask/${userId}`
       );
       setTasks(res.data.tasks);
     } catch (err) {
@@ -32,7 +32,7 @@ function ShowAllTask({ userId }) {
 
   const handleStatusChange = async (taskId, newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/task/updateTask/${taskId}`, {
+      await axios.put(`${import.meta.env.VITE_API_TASK}/updateTask/${taskId}`, {
         status: newStatus,
       });
       toast.success("Status updated!");
@@ -45,7 +45,9 @@ function ShowAllTask({ userId }) {
 
   const handleDelete = async (taskId) => {
     try {
-      await axios.delete(`http://localhost:5000/task/deleteTask/${taskId}`);
+      await axios.delete(
+        `${import.meta.env.VITE_API_TASK}/deleteTask/${taskId}`
+      );
       toast.success("Task deleted successfully!");
       fetchTasks();
     } catch (error) {

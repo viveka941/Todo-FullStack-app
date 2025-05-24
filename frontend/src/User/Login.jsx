@@ -26,11 +26,15 @@ export default function Login() {
   const onSubmit = async (data) => {
     console.log(data);
     try {
-      const res = await axios.post("http://localhost:5000/api/login", data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_USER}/login`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       // Success: show message and optionally set user
       toast.success(res.data.message);

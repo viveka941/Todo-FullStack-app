@@ -17,7 +17,7 @@ export default function UserProfileUpdate({ userId, onClose }) {
     const fetchUserData = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/loginById/${userId}`
+          `${import.meta.env.VITE_API_USER}/loginById/${userId}`
         );
         reset(res.data.user);
       } catch (error) {
@@ -31,7 +31,7 @@ export default function UserProfileUpdate({ userId, onClose }) {
   const onSubmit = async (formData) => {
     try {
       await axios.patch(
-        `http://localhost:5000/api/updateProfile/${userId}`,
+        `${import.meta.env.VITE_API_USER}/updateProfile/${userId}`,
         formData
       );
       toast.success("Profile updated successfully!");

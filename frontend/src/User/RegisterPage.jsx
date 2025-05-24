@@ -30,11 +30,15 @@ export default function RegisterPage() {
   const onSubmit = async (data) => {
     console.log(data);
     try {
-      const res = await axios.post("http://localhost:5000/api/register", data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_USER}/register`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (res.data.success) {
         toast.success("Registration successful!");
