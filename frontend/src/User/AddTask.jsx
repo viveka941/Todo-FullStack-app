@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 
-export default function AddTask({ userId }) {
+export default function AddTask({ userId, onClose }) {
   const {
     register,
     handleSubmit,
@@ -26,8 +26,10 @@ export default function AddTask({ userId }) {
           },
         }
       );
-      console.log(data);
+      console.log(res.data);
+
       toast.success("Task added successfully!");
+      if (onClose) onClose();
       reset(); // clear form
     } catch (error) {
       toast.error("Failed to add task.");
@@ -70,13 +72,12 @@ export default function AddTask({ userId }) {
           <div className="grid gap-1.5">
             <Label>Priority</Label>
             <select
+              defaultValue="medium"
               {...register("priority")}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <option value="low">Low</option>
-              <option value="medium" selected>
-                Medium
-              </option>
+              <option value="medium">Medium</option>
               <option value="high">High</option>
             </select>
           </div>

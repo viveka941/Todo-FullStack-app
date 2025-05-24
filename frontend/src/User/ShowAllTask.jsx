@@ -5,36 +5,21 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const data = [
-  {
-    userTask: "Finish Todo app",
-    description: "Complete backend and UI for Todo app",
-    status: "pending",
-    priority: "high",
-    dueDate: "2025-06-10",
-  },
-  {
-    userTask: "Finish Todo app",
-    description: "Complete backend and UI for Todo app",
-    status: "pending",
-    priority: "high",
-    dueDate: "2025-06-10",
-  },
-];
 function ShowAllTask({ userId }) {
-  const [tasks, setTasks] = useState(data);
+  const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch tasks when userId changes
   useEffect(() => {
     if (!userId) return;
 
     const fetchTasks = async () => {
+      setLoading(true);
       try {
         const res = await axios.get(
           `http://localhost:5000/task/allTask/${userId}`
         );
-        setTasks(res.data.tasks);
-        console.log(res.data.tasks)
+        setTasks(res.data.tasks || []);
       } catch (err) {
         console.error(err);
         toast.error("Failed to load tasks");
@@ -45,6 +30,30 @@ function ShowAllTask({ userId }) {
 
     fetchTasks();
   }, [userId]);
+
+  // Handle status update
+  const handleStatusChange = async (taskId, newStatus) => {
+    try {
+      const res = await axios.patch(
+        `http://localhost:5000/task/updateTask/${taskId}`,
+        {
+          status: newStatus,
+        }
+      );
+
+      // Update tasks state locally
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task._id === taskId ? { ...task, status: newStatus } : task
+        )
+      );
+
+      toast.success("Task status updated");
+    } catch (err) {
+      console.error("Error updating status:", err);
+      toast.error("Failed to update status");
+    }
+  };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -59,9 +68,9 @@ function ShowAllTask({ userId }) {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "done":
+      case "completed":
         return "success";
-      case "in progress":
+      case "in-progress":
         return "info";
       default:
         return "outline";
@@ -111,19 +120,26 @@ function ShowAllTask({ userId }) {
               <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {task.userTask}
               </CardTitle>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 items-center">
                 <Badge
                   variant={getPriorityColor(task.priority)}
                   className="rounded-full px-3 py-1 text-sm"
                 >
                   {task.priority}
                 </Badge>
-                <Badge
-                  variant={getStatusColor(task.status)}
-                  className="rounded-full px-3 py-1 text-sm"
-                >
-                  {task.status}
-                </Badge>
+                <div>
+                  <select
+                    className={`rounded-md border px-2 py-1 text-sm`}
+                    value={task.status}
+                    onChange={(e) =>
+                      handleStatusChange(task._id, e.target.value)
+                    }
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">

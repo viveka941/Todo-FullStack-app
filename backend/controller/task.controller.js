@@ -7,7 +7,7 @@ export const addTask = async (req, res) => {
       req.body;
 
     
-    if (!userTask || !description || !status || !priority) {
+    if (!userTask || !description || !priority) {
       return res.status(400).json({
         message: "Required fields are missing",
         success: false,
@@ -67,3 +67,52 @@ export const fetechTask = async (req, res) => {
     });
   }
 };
+
+export const updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!id) {
+      return res.status(400).json({
+        message: "Task ID is required.",
+        success: false,
+      });
+    }
+
+    const task = await Task.findById(id);
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Task does not exist.",
+        success: false,
+      });
+    }
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true } 
+    );
+
+    return res.status(200).json({
+      message: "Successfully updated task status.",
+      success: true,
+      task: updatedTask,
+    });
+  } catch (error) {
+    console.error("Update Task Error:", error);
+    return res.status(500).json({
+      message: "Internal server error.",
+      success: false,
+    });
+  }
+};
+
+export const deleteTask = async(req,res)=>{
+  try {
+    const {id} = req.params
+  } catch (error) {
+    
+  }
+}
