@@ -6,8 +6,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RocketIcon, CalendarIcon, LineChartIcon, ListChecksIcon, UsersIcon, MessageSquareIcon, ArrowRightIcon, ZapIcon } from "lucide-react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate()
   return (
     <>
       <Navbar />
@@ -24,6 +26,7 @@ export default function Home() {
               an intuitive dashboard designed for productivity.
             </p>
             <Button
+              onClick ={()=>navigate("/login")}
               size="lg"
               className="w-full md:w-auto px-8 py-6 text-lg group"
             >
@@ -224,6 +227,7 @@ export default function Home() {
                 organized and successful life.
               </p>
               <Button
+              onClick={()=>navigate("/login")}
                 size="lg"
                 className="w-full md:w-auto px-10 py-6 text-lg group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
               >
@@ -235,15 +239,7 @@ export default function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="w-full max-w-5xl text-center text-white/80 pt-8">
-          <p>
-            &copy; {new Date().getFullYear()} Your Progress Tracker. All Rights
-            Reserved.
-          </p>
-          <p className="text-sm mt-1">
-            Built with Next.js, Tailwind CSS, and shadcn/ui.
-          </p>
-        </footer>
+      
         <Footer/>
       </div>
     </>

@@ -4,54 +4,53 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Trash2 } from "lucide-react"; // 🔥 Trash icon import
 
 function ShowAllTask({ userId }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch tasks when userId changes
-  useEffect(() => {
+  const fetchTasks = async () => {
     if (!userId) return;
-
-    const fetchTasks = async () => {
+    try {
       setLoading(true);
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/task/allTask/${userId}`
-        );
-        setTasks(res.data.tasks || []);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to load tasks");
-      } finally {
-        setLoading(false);
-      }
-    };
+      const res = await axios.get(
+        `http://localhost:5000/task/allTask/${userId}`
+      );
+      setTasks(res.data.tasks);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load tasks");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTasks();
   }, [userId]);
 
-  // Handle status update
   const handleStatusChange = async (taskId, newStatus) => {
     try {
-      const res = await axios.patch(
-        `http://localhost:5000/task/updateTask/${taskId}`,
-        {
-          status: newStatus,
-        }
-      );
+      await axios.put(`http://localhost:5000/task/updateTask/${taskId}`, {
+        status: newStatus,
+      });
+      toast.success("Status updated!");
+      fetchTasks();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update status.");
+    }
+  };
 
-      // Update tasks state locally
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task._id === taskId ? { ...task, status: newStatus } : task
-        )
-      );
-
-      toast.success("Task status updated");
-    } catch (err) {
-      console.error("Error updating status:", err);
-      toast.error("Failed to update status");
+  const handleDelete = async (taskId) => {
+    try {
+      await axios.delete(`http://localhost:5000/task/deleteTask/${taskId}`);
+      toast.success("Task deleted successfully!");
+      fetchTasks();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete task.");
     }
   };
 
@@ -63,17 +62,6 @@ function ShowAllTask({ userId }) {
         return "warning";
       default:
         return "secondary";
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "completed":
-        return "success";
-      case "in-progress":
-        return "info";
-      default:
-        return "outline";
     }
   };
 
@@ -120,26 +108,22 @@ function ShowAllTask({ userId }) {
               <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {task.userTask}
               </CardTitle>
-              <div className="flex flex-wrap gap-2 items-center">
+              <div className="flex flex-wrap gap-2">
                 <Badge
                   variant={getPriorityColor(task.priority)}
                   className="rounded-full px-3 py-1 text-sm"
                 >
                   {task.priority}
                 </Badge>
-                <div>
-                  <select
-                    className={`rounded-md border px-2 py-1 text-sm`}
-                    value={task.status}
-                    onChange={(e) =>
-                      handleStatusChange(task._id, e.target.value)
-                    }
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                </div>
+                <select
+                  value={task.status}
+                  onChange={(e) => handleStatusChange(task._id, e.target.value)}
+                  className="rounded px-2 py-1 text-sm border"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="in progress">In Progress</option>
+                  <option value="done">Completed</option>
+                </select>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -158,6 +142,13 @@ function ShowAllTask({ userId }) {
                   </span>
                 </div>
               )}
+              <div className="flex justify-end">
+                <Trash2
+                  className="text-red-600 cursor-pointer hover:text-red-800 transition"
+                  size={20}
+                  onClick={() => handleDelete(task._id)}
+                />
+              </div>
             </CardContent>
           </Card>
         ))

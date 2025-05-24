@@ -108,11 +108,27 @@ export const updateTask = async (req, res) => {
     });
   }
 };
-
-export const deleteTask = async(req,res)=>{
+export const deleteTask = async (req, res) => {
   try {
-    const {id} = req.params
+    const { id } = req.params;
+    const deleteT = await Task.findByIdAndDelete(id);
+
+    if (!deleteT) {
+      return res.status(404).json({
+        message: "Task not found.",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Successfully deleted task.",
+      success: true,
+    });
   } catch (error) {
-    
+    console.error("Delete Task Error:", error);
+    return res.status(500).json({
+      message: "Internal server error.",
+      success: false,
+    });
   }
-}
+};
