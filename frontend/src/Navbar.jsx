@@ -50,7 +50,7 @@ export default function Navbar() {
           <Button
             onClick={() => {
               toast("Welcome back!", {
-                description: "You have successfully logged in.",
+                description: "This is progress webpages",
                 duration: 3000,
               });
               navigate("/login");
@@ -58,7 +58,7 @@ export default function Navbar() {
             className="hidden md:inline-flex"
             size="sm"
           >
-            Get Started <RocketIcon className="ml-2 h-4 w-4" />
+            Login <RocketIcon className="ml-2 h-4 w-4" />
           </Button>
 
           {/* Mobile Menu */}
