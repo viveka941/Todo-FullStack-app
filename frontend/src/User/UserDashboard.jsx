@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import SlackMessageForm from "./SlackMessageForm";
 
 function UserProfileUpdate({ userId, onClose }) {
   const {
@@ -105,6 +106,8 @@ function UserProfileUpdate({ userId, onClose }) {
           </Button>
         </div>
       </form>
+      <br />
+      <br />
     </div>
   );
 }
@@ -343,6 +346,10 @@ export default function UserDashboard() {
 
           <Card className="rounded-lg shadow-sm border-0 bg-white dark:bg-slate-800">
             <CardContent className="p-6">
+              <SlackMessageForm />
+            </CardContent>
+            <CardContent className="p-6">
+            
               <ShowAllTask userId={id} refreshKey={refreshKey} />
             </CardContent>
           </Card>

@@ -9,7 +9,7 @@ import { Trash2 } from "lucide-react";
 function ShowAllTask({ userId, refreshKey }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [allUser,setAllUser]=useState([])
+  const [allUser, setAllUser] = useState([]);
 
   const fetchTasks = async () => {
     if (!userId) return;
@@ -74,7 +74,7 @@ function ShowAllTask({ userId, refreshKey }) {
     async function allUserData() {
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_USER}/allUser`);
-       
+
         setAllUser(res.data.users);
       } catch (error) {
         console.error(error);
@@ -95,7 +95,24 @@ function ShowAllTask({ userId, refreshKey }) {
       toast.error("Failed to assign task.");
     }
   };
-  
+
+  async function summriseMsgSend(data) {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_SLACK}/message`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to assign task.");
+    }
+  }
 
   if (loading) {
     return (
@@ -259,7 +276,6 @@ function ShowAllTask({ userId, refreshKey }) {
       </div>
     </div>
   );
-  
 }
 
 export default ShowAllTask;

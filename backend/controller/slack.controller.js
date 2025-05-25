@@ -2,13 +2,13 @@ import axios from "axios";
 import { Task } from "../model/task.model.js";
 
 const SLACK_WEBHOOK_URL =
-  "https://hooks.slack.com/services/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";
+  "https://hooks.slack.com/services/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";
 
 export const slack = async (req, res) => {
   const { message } = req.body;
 
   try {
-    await axios.post(SLACK_WEBHOOK_URL, {
+     await axios.post(SLACK_WEBHOOK_URL, {
       text: message,
     });
 
@@ -25,7 +25,7 @@ export const slack = async (req, res) => {
 
 export const summarizeSlack = async (req, res) => {
   try {
-    // ✅ Step 1: Get filters from request body or query
+  
     const {id} = req.body 
     const { userId, status, priority, fromDate, toDate } = req.body;
 
