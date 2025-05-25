@@ -48,3 +48,8 @@ npm run dev
 
 ```
 ![Image](https://github.com/user-attachments/assets/5ae8b020-f892-40fb-b3e8-99cdc52e3de9)
+![Image](https://github.com/user-attachments/assets/2fa8efad-094e-429b-9870-256b072e50cf)
+![Image](https://github.com/user-attachments/assets/b9947b8d-2b3f-457f-96ea-d654d7028af3)
+![Image](https://github.com/user-attachments/assets/5a2f1269-c552-4042-8730-aafa751d9aa2)
+![Image](https://github.com/user-attachments/assets/2d6d42fc-3942-409f-88d7-bc7993513597)
+![Image](https://github.com/user-attachments/assets/787981d3-f2f2-4cf7-9456-9d631edca674)
