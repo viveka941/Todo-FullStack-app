@@ -27,12 +27,17 @@ A full-stack **Todo Progress Tracker Web App** that allows users to manage their
 | **Frontend**   | React, Vite, Axios  |
 | **Backend**    | Node.js, Express    |
 | **Database**   | MongoDB             |
-| **Authentication** | JWT, bcryptjs |
+| **Authentication** | JWT, bcryptjs   |
 | **Dev Tools**  | Docker, Docker Compose, .env support |
+| **Deploy**     | aws, render         |
 
 ---
+## 🌐 Live Demo
 
-## 🐳 Run Locally with Docker
+-  Render (Backend + Frontend): [https://todo-fullstack-app-1.onrender.com/](https://todo-fullstack-app-1.onrender.com/)
+-  AWS Backend + Frontend): [http://54.211.7.49:5173/](http://54.211.7.49:5173/)
+
+
 
 ### 1. Clone the Repository
 ```bash
