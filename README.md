@@ -35,7 +35,7 @@ A full-stack **Todo Progress Tracker Web App** that allows users to manage their
 ## 🌐 Live Demo
 
 -  Render (Backend + Frontend): [https://todo-fullstack-app-1.onrender.com/](https://todo-fullstack-app-1.onrender.com/)
--  AWS Backend + Frontend): [http://54.211.7.49:5173/](http://54.211.7.49:5173/)
+-  AWS (Backend + Frontend): [http://54.211.7.49:5173/](http://54.211.7.49:5173/)
 
 
 
