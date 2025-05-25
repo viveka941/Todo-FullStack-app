@@ -47,4 +47,4 @@ npm install
 npm run dev
 
 ```
-Uploading "Screenshot 2025-05-25 183025.png
+![Image](https://github.com/user-attachments/assets/5ae8b020-f892-40fb-b3e8-99cdc52e3de9)
