@@ -27,8 +27,7 @@ A full-stack **Todo Progress Tracker Web App** that allows users to manage their
 | **Frontend**   | React, Vite, Axios  |
 | **Backend**    | Node.js, Express    |
 | **Database**   | MongoDB             |
-| **Authentication** | JWT, bcryptjs   |
-| **Dev Tools**  | Docker, Docker Compose, .env support |
+| **Dev Tools**  | Docker, Docker Compose, .env  |
 | **Deploy**     | aws, render         |
 
 ---
