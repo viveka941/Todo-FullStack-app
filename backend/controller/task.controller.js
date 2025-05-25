@@ -170,3 +170,21 @@ export const assignOtherUser = async (req, res) => {
     });
   }
 };
+
+
+
+export const allTask = async(req,res)=>{
+  try {
+    const alltask = await Task.find()
+    return res.status(200).json({
+      message:"all task ",
+      tasks : alltask
+    })
+  } catch (error) {
+   
+    return res.status(500).json({
+      message: "Internal server error while assigning task.",
+      success: false,
+    });
+  }
+}

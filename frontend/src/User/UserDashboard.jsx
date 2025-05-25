@@ -116,12 +116,25 @@ function AddTaskComponent({ userId, onClose, onTaskAdded }) {
     formState: { errors },
     reset,
   } = useForm();
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_USER}/users`);
+        setUsers(res.data.users);
+      } catch (error) {
+        toast.error("Failed to load users");
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const onSubmit = async (data) => {
     try {
       await axios.post(
         `${import.meta.env.VITE_API_TASK}/addTask/${userId}`,
-        data,
+        { ...data, assignedBy: userId },
         {
           headers: {
             "Content-Type": "application/json",
@@ -164,6 +177,28 @@ function AddTaskComponent({ userId, onClose, onTaskAdded }) {
               {...register("description")}
               className="min-h-[100px]"
             />
+          </div>
+
+          <div className="grid gap-1.5">
+            <Label>Assign To</Label>
+            <select
+              {...register("assignedTo", {
+                required: "User assignment is required",
+              })}
+              className="flex h-10 w-full rounded-md border border-input px-3 py-2 text-sm"
+            >
+              <option value="">Select User</option>
+              {users.map((user) => (
+                <option key={user._id} value={user._id}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+            {errors.assignedTo && (
+              <p className="text-sm text-red-500">
+                {errors.assignedTo.message}
+              </p>
+            )}
           </div>
 
           <div className="grid gap-1.5">
@@ -275,7 +310,7 @@ export default function UserDashboard() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-              <span>Your Tasks</span>
+              <span>Assigned Tasks</span>
               <Badge
                 variant="secondary"
                 className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
@@ -294,7 +329,7 @@ export default function UserDashboard() {
                 <DialogHeader>
                   <DialogTitle>Create New Task</DialogTitle>
                   <DialogDescription>
-                    Organize your work with clear tasks
+                    Assign and organize tasks efficiently
                   </DialogDescription>
                 </DialogHeader>
                 <AddTaskComponent
