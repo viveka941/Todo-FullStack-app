@@ -132,3 +132,41 @@ export const deleteTask = async (req, res) => {
     });
   }
 };
+
+
+export const assignOtherUser = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { assignedTo } = req.body;
+
+    if (!assignedTo) {
+      return res.status(400).json({
+        message: "Assigned user ID is required.",
+        success: false,
+      });
+    }
+
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({
+        message: "Task not found.",
+        success: false,
+      });
+    }
+
+    task.assignedTo = assignedTo;
+    await task.save();
+
+    return res.status(200).json({
+      message: "Task successfully assigned to another user.",
+      success: true,
+      task,
+    });
+  } catch (error) {
+    console.error("Assign User Error:", error.message);
+    return res.status(500).json({
+      message: "Internal server error while assigning task.",
+      success: false,
+    });
+  }
+};

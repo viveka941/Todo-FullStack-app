@@ -249,4 +249,18 @@ export const deleteProfile = async (req, res) => {
 };
 
 
-
+export const getAllUser = async (req, res) => {
+  try {
+    const allUser = await User.find();
+    return res.status(200).json({
+      message: "Successfully fetched users",
+      users: allUser,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res.status(500).json({
+      message: "Error fetching users",
+      error: error.message,
+    });
+  }
+};

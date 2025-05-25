@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-
 import {
   Dialog,
   DialogTrigger,
@@ -130,9 +129,9 @@ function AddTaskComponent({ userId, onClose, onTaskAdded }) {
         }
       );
       toast.success("Task added successfully!");
+      reset();
       if (onClose) onClose();
       if (onTaskAdded) onTaskAdded();
-      reset();
     } catch (error) {
       toast.error("Failed to add task.");
     }
@@ -196,6 +195,7 @@ function AddTaskComponent({ userId, onClose, onTaskAdded }) {
 
 export default function UserDashboard() {
   const [open, setOpen] = useState(false);
+  const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [user, setUser] = useState({});
   const [refreshKey, setRefreshKey] = useState(0);
   const { id } = useParams();
@@ -283,7 +283,7 @@ export default function UserDashboard() {
                 {user.tasks?.length || 0}
               </Badge>
             </h2>
-            <Dialog>
+            <Dialog open={addTaskOpen} onOpenChange={setAddTaskOpen}>
               <DialogTrigger asChild>
                 <Button className="gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white">
                   <PlusCircle className="h-4 w-4" />
@@ -299,7 +299,7 @@ export default function UserDashboard() {
                 </DialogHeader>
                 <AddTaskComponent
                   userId={id}
-                  onClose={() => setOpen(false)}
+                  onClose={() => setAddTaskOpen(false)}
                   onTaskAdded={() => setRefreshKey((prev) => prev + 1)}
                 />
               </DialogContent>
