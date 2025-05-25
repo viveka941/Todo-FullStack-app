@@ -46,5 +46,5 @@ cd frontend
 npm install
 npm run dev
 
-
-<!-- Uploading "Screenshot 2025-05-25 183025.png"... -->
+```
+Uploading "Screenshot 2025-05-25 183025.png
