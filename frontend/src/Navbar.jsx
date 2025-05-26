@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,6 +15,20 @@ import { toast } from "sonner";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in (from localStorage or token)
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    toast("Logged out successfully!");
+    navigate("/");
+  };
 
   const navLinks = [
     { to: "/features", label: "Features" },
@@ -47,19 +61,30 @@ export default function Navbar() {
 
         {/* Desktop CTA & Mobile Menu Trigger */}
         <div className="flex items-center gap-3">
-          <Button
-            onClick={() => {
-              toast("Welcome back!", {
-                description: "This is progress webpages",
-                duration: 3000,
-              });
-              navigate("/login");
-            }}
-            className="hidden md:inline-flex"
-            size="sm"
-          >
-            Login <RocketIcon className="ml-2 h-4 w-4" />
-          </Button>
+          {isLoggedIn ? (
+            <Button
+              onClick={handleLogout}
+              className="hidden md:inline-flex"
+              size="sm"
+              variant="destructive"
+            >
+              Logout
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                toast("Welcome back!", {
+                  description: "This is progress webpages",
+                  duration: 3000,
+                });
+                navigate("/login");
+              }}
+              className="hidden md:inline-flex"
+              size="sm"
+            >
+              Login <RocketIcon className="ml-2 h-4 w-4" />
+            </Button>
+          )}
 
           {/* Mobile Menu */}
           <Sheet>
@@ -94,13 +119,24 @@ export default function Navbar() {
                 </nav>
                 <Separator className="my-2" />
                 <div className="p-4 mt-auto">
-                  <Button
-                    onClick={() => navigate("/login")}
-                    className="w-full"
-                    size="lg"
-                  >
-                    Get Started <RocketIcon className="ml-2 h-4 w-4" />
-                  </Button>
+                  {isLoggedIn ? (
+                    <Button
+                      onClick={handleLogout}
+                      className="w-full"
+                      variant="destructive"
+                      size="lg"
+                    >
+                      Logout
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => navigate("/login")}
+                      className="w-full"
+                      size="lg"
+                    >
+                      Get Started <RocketIcon className="ml-2 h-4 w-4" />
+                    </Button>
+                  )}
                   <p className="mt-4 text-center text-xs text-muted-foreground">
                     &copy; {new Date().getFullYear()} ProgressTrack
                   </p>

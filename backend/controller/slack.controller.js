@@ -23,10 +23,10 @@ export const slack = async (req, res) => {
   }
 };
 
+
 export const summarizeSlack = async (req, res) => {
   try {
-  
-    const {id} = req.body 
+    // ✅ Step 1: Get filters from request body or query
     const { userId, status, priority, fromDate, toDate } = req.body;
 
     const filter = {};
@@ -69,7 +69,6 @@ export const summarizeSlack = async (req, res) => {
     res
       .status(200)
       .json({ status: "success", message: "Summary sent to Slack" });
-
   } catch (error) {
     console.error("Error sending summary to Slack:", error.message);
     res
@@ -77,4 +76,5 @@ export const summarizeSlack = async (req, res) => {
       .json({ status: "error", message: "Failed to send summary to Slack" });
   }
 };
+
 

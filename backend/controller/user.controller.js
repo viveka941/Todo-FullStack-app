@@ -1,12 +1,11 @@
-import bcrypt from "bcryptjs";
 import { User } from "../model/user.model.js";
-import jwt from 'jsonwebtoken'
 
+// Register Controller
 export const register = async (req, res) => {
   try {
     const { name, email, password, phone, address } = req.body;
 
-    if (!name || !email || !password || !phone  ) {
+    if (!name || !email || !password || !phone) {
       return res.status(400).json({
         message: "Required fields are missing",
         success: false,
@@ -21,12 +20,10 @@ export const register = async (req, res) => {
       });
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
-
     const newUser = await User.create({
       name,
       email,
-      password: hashPassword,
+      password,
       phone,
       address,
     });
@@ -34,7 +31,13 @@ export const register = async (req, res) => {
     return res.status(201).json({
       message: "User registered successfully",
       success: true,
-      user: newUser,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+        address: newUser.address,
+      },
     });
   } catch (error) {
     console.error("Register Error:", error);
@@ -46,6 +49,7 @@ export const register = async (req, res) => {
   }
 };
 
+// Login Controller
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -66,40 +70,22 @@ export const login = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(password, existingUser.password);
-
-    if (!isMatch) {
+    if (password !== existingUser.password) {
       return res.status(401).json({
-        message: "Wrong password",
+        message: "Incorrect password",
         success: false,
       });
     }
 
-    // Generate JWT
-    const tokenData = {
-      userId: existingUser._id,
-    };
-
-    const token = jwt.sign(tokenData, "12345abc", {
-      expiresIn: "1h",
+    return res.status(200).json({
+      message: "Successfully logged in",
+      success: true,
+      user: {
+        id: existingUser._id,
+        email: existingUser.email,
+        name: existingUser.name,
+      },
     });
-
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
-        httpOnly: true,
-        sameSite: "Strict",
-      })
-      .json({
-        message: "Successfully logged in",
-        success: true,
-        user: {
-          id: existingUser._id,
-          email: existingUser.email,
-          name: existingUser.name,
-        },
-      });
   } catch (error) {
     console.error("Login Error:", error);
     return res.status(500).json({
@@ -110,13 +96,14 @@ export const login = async (req, res) => {
   }
 };
 
+// Login by ID
 export const loginById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await User.findById(id); // ✅ Pass `id` directly
+    const user = await User.findById(id).select("-password");
 
-    if (!data) {
+    if (!user) {
       return res.status(404).json({
         message: "User not found",
         success: false,
@@ -126,10 +113,10 @@ export const loginById = async (req, res) => {
     return res.status(200).json({
       message: "Login by ID successful",
       success: true,
-      user: data,
+      user,
     });
   } catch (error) {
-    console.error("Login Error:", error);
+    console.error("Login by ID Error:", error);
     return res.status(500).json({
       message: "Server error during login by ID",
       success: false,
@@ -141,7 +128,7 @@ export const loginById = async (req, res) => {
 // Logout Controller
 export const logout = (req, res) => {
   try {
-    return res.status(200).clearCookie("token").json({
+    return res.status(200).json({
       message: "Logged out successfully",
       success: true,
     });
@@ -154,7 +141,7 @@ export const logout = (req, res) => {
   }
 };
 
-
+// Update Profile Controller
 export const updateProfile = async (req, res) => {
   try {
     const { id } = req.params;
@@ -168,18 +155,12 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-  
-    let updatedPassword = existingUser.password;
-    if (password) {
-      updatedPassword = await bcrypt.hash(password, 10);
-    }
-
     const updatedUser = await User.findByIdAndUpdate(
       id,
       {
         name: name || existingUser.name,
         email: email || existingUser.email,
-        password: updatedPassword,
+        password: password || existingUser.password,
         phone: phone || existingUser.phone,
         address: address || existingUser.address,
       },
@@ -189,7 +170,7 @@ export const updateProfile = async (req, res) => {
     return res.status(200).json({
       message: "Profile updated successfully",
       success: true,
-      profile: updatedUser
+      profile: updatedUser,
     });
   } catch (error) {
     console.error("Update Profile Error:", error);
@@ -201,8 +182,7 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-
-
+// Delete Profile Controller
 export const deleteProfile = async (req, res) => {
   try {
     const { id } = req.params;
@@ -248,18 +228,21 @@ export const deleteProfile = async (req, res) => {
   }
 };
 
-
+// Get All Users
 export const getAllUser = async (req, res) => {
   try {
-    const allUser = await User.find();
+    const allUser = await User.find().select("-password");
+
     return res.status(200).json({
       message: "Successfully fetched users",
+      success: true,
       users: allUser,
     });
   } catch (error) {
     console.error("Error fetching users:", error);
     return res.status(500).json({
       message: "Error fetching users",
+      success: false,
       error: error.message,
     });
   }

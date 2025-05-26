@@ -21,7 +21,6 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import SlackMessageForm from "./SlackMessageForm";
 
 function UserProfileUpdate({ userId, onClose }) {
   const {
@@ -106,8 +105,6 @@ function UserProfileUpdate({ userId, onClose }) {
           </Button>
         </div>
       </form>
-      <br />
-      <br />
     </div>
   );
 }
@@ -182,27 +179,7 @@ function AddTaskComponent({ userId, onClose, onTaskAdded }) {
             />
           </div>
 
-          <div className="grid gap-1.5">
-            <Label>Assign To</Label>
-            <select
-              {...register("assignedTo", {
-                required: "User assignment is required",
-              })}
-              className="flex h-10 w-full rounded-md border border-input px-3 py-2 text-sm"
-            >
-              <option value="">Select User</option>
-              {users.map((user) => (
-                <option key={user._id} value={user._id}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
-            {errors.assignedTo && (
-              <p className="text-sm text-red-500">
-                {errors.assignedTo.message}
-              </p>
-            )}
-          </div>
+          
 
           <div className="grid gap-1.5">
             <Label>Priority</Label>
@@ -346,10 +323,6 @@ export default function UserDashboard() {
 
           <Card className="rounded-lg shadow-sm border-0 bg-white dark:bg-slate-800">
             <CardContent className="p-6">
-              <SlackMessageForm />
-            </CardContent>
-            <CardContent className="p-6">
-            
               <ShowAllTask userId={id} refreshKey={refreshKey} />
             </CardContent>
           </Card>
